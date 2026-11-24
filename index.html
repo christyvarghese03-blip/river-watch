@@ -61,7 +61,8 @@
   .logo { width: 54px; height: 54px; border-radius: 16px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); display: grid; place-items: center; flex: none; }
   .logo svg { width: 38px; height: 38px; display: block; }
   .title { font-weight: 600; font-size: clamp(44px, 5.2vw, 68px); line-height: 1; letter-spacing: 0.06em; text-transform: uppercase; text-shadow: 0 2px 6px rgba(0,0,0,.28), 0 1px 1px rgba(0,0,0,.2); }
-  .sub { color: var(--head-sub); font-size: 12.5px; margin-top: 4px; }
+  .title .cap { font-size: 1.24em; line-height: 0.9; }
+  .sub { color: var(--head-sub); font-family: Georgia, "Times New Roman", serif; font-size: clamp(13px, 1.1vw, 16px); margin-top: 6px; letter-spacing: 0.01em; }
   .spacer { flex: 1; }
   .status { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; white-space: nowrap; background: rgba(255,255,255,.15); }
   .status.ok { background: var(--ok-bg); color: var(--ok-text); }
@@ -83,13 +84,14 @@
   .btn.ghost { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
   .btn:disabled { opacity: .6; cursor: wait; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-top: 20px; }
-  .card h2 { margin: 0 0 6px; font-size: 21px; font-weight: 700; color: var(--accent); }
+  .card h2 { margin: 0 0 6px; font-family: Georgia, "Times New Roman", serif; font-size: clamp(17px, 1.75vw, 23px); font-weight: 700; letter-spacing: 0; color: var(--accent); }
   [data-theme="dark"] .card h2 { color: var(--text); }
   .drawer h2 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; }
   .meta { color: var(--muted); font-size: 12.5px; margin-bottom: 12px; }
   .disclaimer { margin-top: 18px; padding: 10px 14px; border-radius: 12px; background: var(--warn-bg); border: 1px solid var(--warn-border); font-size: 13.5px; font-weight: 600; }
   .disclaimer.info { background: var(--info-bg); border-color: var(--info-border); font-weight: 500; }
-  .disclaimer.alert { font-family: "Times New Roman", Times, serif; font-size: 16px; word-spacing: 0.22em; letter-spacing: 0.015em; line-height: 1.6; padding: 12px 16px; }
+  .disclaimer.alert { font-family: "Times New Roman", Times, serif; font-size: 18px; font-weight: 400; word-spacing: 0.22em; letter-spacing: 0.01em; line-height: 1.55; padding: 12px 18px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+  .disclaimer.alert b { font-weight: 700; }
   .ask-row { display: flex; gap: 10px; align-items: flex-end; }
   .ask-row textarea { resize: vertical; min-height: 54px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -102,9 +104,11 @@
   .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
   table { border-collapse: collapse; width: 100%; font-size: 13px; }
   th, td { padding: 9px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
-  th { background: var(--th); color: var(--th-text); font-size: 12px; white-space: nowrap; }
+  th { background: var(--th); color: var(--th-text); font-size: 12px; white-space: normal; line-height: 1.3; }
   tr:nth-child(even) td { background: var(--zebra); }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.num .why { white-space: normal; min-width: 150px; }
+  .c-plan td.num:nth-child(3) { min-width: 170px; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; }
   .pill.Normal { background: var(--normal); } .pill.Standby { background: var(--standby); } .pill.Barriers { background: var(--barriers); }
   .flag { color: var(--barriers); font-weight: 700; }
@@ -114,20 +118,17 @@
   footer { color: var(--muted); font-size: 12px; margin-top: 26px; text-align: center; }
 
   /* Bento / collage layout: cards in reading order (01 Ask, 02 Plan, 03 History, 04 Sources) */
-  .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; margin-top: 20px; align-items: start; }
+  .bento { display: grid; gap: 20px; margin-top: 20px; align-items: start; }
   .bento .card { margin-top: 0; position: relative; overflow: hidden; }
   .bento .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); opacity: .85; }
-  .c-ask, .c-plan, .c-hist, .c-src { grid-column: 1 / -1; }
+  .col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
   .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
   .eyebrow .num { display: inline-grid; place-items: center; min-width: 26px; height: 22px; padding: 0 6px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); font-family: "Space Grotesk", "Inter", sans-serif; letter-spacing: 0; }
   [data-theme="dark"] .eyebrow .num { color: var(--accent); }
   #chat { max-height: 68vh; overflow-y: auto; padding-right: 4px; }
-  @media (min-width: 1280px) {
-    .c-ask  { grid-column: span 5; }
-    .c-plan { grid-column: span 7; }
-    .c-hist { grid-column: span 7; }
-    .c-src  { grid-column: span 5; }
-  }
+  .bento { grid-template-columns: 1fr; }
+  @media (max-width: 1099px) { .col { display: contents; } .c-ask { order: 1; } .c-plan { order: 2; } .c-hist { order: 3; } .c-src { order: 4; } }
+  @media (min-width: 1100px) { .bento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: stretch; } .col-left .c-hist { margin-top: auto; } }
   @media (max-width: 860px) { .tag { display: none; } }
   @media (max-width: 640px) { .ask-row { flex-direction: column; align-items: stretch; } .sub { display: none; }
     .bar { grid-template-columns: auto 1fr auto; gap: 10px; } .brand { text-align: left; } .status { display: none; } .title { font-size: 32px; } }
@@ -152,8 +153,8 @@
       <div class="tag">Flood Response<br>Decision Support</div>
     </div>
     <div class="brand">
-      <div class="title">River Watch</div>
-      <div class="sub">Eight towns · Flood Plan 2026/27 · fictional organisation, live data</div>
+      <div class="title" aria-label="River Watch"><span class="cap">R</span>iver <span class="cap">W</span>atch</div>
+      <div class="sub">Eight Towns · Flood Plan 2026/27 · Fictional organisation, Live Data</div>
     </div>
     <div class="bar-right">
       <span id="status" class="status">Checking settings…</span>
@@ -195,13 +196,14 @@
 </aside>
 
 <main class="wrap">
-  <div class="disclaimer alert">⚠ AI can make mistakes. River Watch only recommends; the Duty Officer makes the final decision and records it by 16:00. You are talking to an AI assistant, not a person.</div>
+  <div class="disclaimer alert">⚠ <b>AI can make mistakes.</b> River Watch only recommends; the Duty Officer makes the final decision and records it by 16:00. You are talking to an AI assistant, not a person.</div>
 
   <div id="keyBanner" class="disclaimer info" style="display:none">
     🔑 <b>First time on this browser?</b> To ask questions, click <a href="#" id="bannerOpen">⚙ Settings</a>, choose your provider (Anthropic, OpenAI, Google Gemini or Groq) and paste your own API key. The key is saved only in this browser, so each new browser or computer needs it once. The plan table below works without a key.
   </div>
 
   <div class="bento">
+  <div class="col col-left">
   <section class="card c-ask">
     <div class="eyebrow"><span class="num">01</span>Ask</div>
     <h2>Ask River Watch</h2>
@@ -215,25 +217,26 @@
     <div style="margin-top:10px"><button class="btn ghost" id="clear" style="padding:6px 12px;font-size:12.5px">Clear conversation</button></div>
   </section>
 
+  <section class="card c-hist">
+    <div class="eyebrow"><span class="num">03</span>History</div>
+    <h2>Ten-Year History (Stored Summary)</h2>
+    <div class="meta">Computed once from daily flows 1 Jan 2016 – 31 Dec 2025 and stored in summary.json; not re-downloaded per question.</div>
+    <div id="history"><span class="loading">Loading…</span></div>
+  </section>
+  </div>
+  <div class="col col-right">
   <section class="card c-plan">
     <div class="eyebrow"><span class="num">02</span>Plan</div>
-    <h2>Tonight's plan, computed in code</h2>
+    <h2>Tonight's Plan, Computed In Code</h2>
     <div class="meta" id="planMeta">Loading live data…</div>
     <div id="plan"><span class="loading">Loading…</span></div>
     <div id="crews" style="margin-top:12px"></div>
     <div id="warn" style="margin-top:12px"></div>
   </section>
 
-  <section class="card c-hist">
-    <div class="eyebrow"><span class="num">03</span>History</div>
-    <h2>Ten-year history (stored summary)</h2>
-    <div class="meta">Computed once from daily flows 1 Jan 2016 – 31 Dec 2025 and stored in summary.json; not re-downloaded per question.</div>
-    <div id="history"><span class="loading">Loading…</span></div>
-  </section>
-
   <section class="card c-src">
     <div class="eyebrow"><span class="num">04</span>Sources</div>
-    <h2>Where every number comes from</h2>
+    <h2>Where Every Number Comes From</h2>
     <ul class="src">
       <li><b>Team Sheet</b> (town, resources, overrides, notes): Google Sheet, read live as CSV on every question.</li>
       <li><b>River flow forecast</b>: Open-Meteo Flood API, <code>daily.river_discharge</code> (m³/s), GloFAS v4 data, today + next two days. <a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a> (CC BY 4.0).</li>
@@ -242,7 +245,7 @@
       <li>Not covered: coastal and tidal flooding, road closures, insurance, individual homes. Contact the council's area office.</li>
     </ul>
   </section>
-
+  </div>
   </div>
 
   <footer>River Watch · BDAIB CA2 · Fictional organisation and Sheet values; live public data. Flow data: Open-Meteo.com / GloFAS (Copernicus EMS). Warnings: Met Éireann.</footer>
@@ -530,7 +533,7 @@ function renderPlan(plan, data) {
 }
 function renderHistory() {
   const T = SUMMARY.towns;
-  $('history').innerHTML = `<div class="table-wrap"><table><tr><th>Town</th><th>River</th><th>Flow point</th><th>Mean</th><th>p95</th><th>p99</th><th>Winter events</th><th>First 4 / last 4</th></tr>` +
+  $('history').innerHTML = `<div class="table-wrap"><table><tr><th>Town</th><th>River</th><th>Flow point</th><th>Mean</th><th>p95</th><th>p99</th><th>Winter events</th><th>First 4 /<br>last 4</th></tr>` +
     Object.keys(T).map(t => `<tr><td>${t}</td><td>${T[t].river}</td><td class="num">${T[t].flow_point.join(', ')}</td><td class="num">${T[t].mean_m3s}</td><td class="num">${T[t].p95_m3s}</td><td class="num">${T[t].p99_m3s}</td><td class="num">${T[t].winter_events_total}</td><td class="num">${T[t].events_first_four} / ${T[t].events_last_four}</td></tr>`).join('') +
     `</table></div>`;
 }
