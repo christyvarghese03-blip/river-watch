@@ -92,7 +92,7 @@
     <h2>Settings</h2>
     <button class="icon-btn" id="closeSettings" aria-label="Close settings">✕</button>
   </div>
-  <p class="hint">Your key is stored only in this browser (localStorage). It is never in this page's code or on GitHub, and it is sent only to the provider you choose.</p>
+  <p class="hint">Optional. With no key here, River Watch uses the team's shared key, which is held server-side (never in this page or on GitHub). To use your own instead, paste it below: it is stored only in this browser (localStorage) and sent only to the provider you choose.</p>
   <div class="field">
     <label for="provider">Provider</label>
     <select id="provider">
@@ -119,6 +119,10 @@
 
 <main class="wrap">
   <div class="disclaimer">⚠ AI can make mistakes. River Watch only recommends; the Duty Officer makes the final decision and records it by 16:00. You are talking to an AI assistant, not a person.</div>
+
+  <div id="keyBanner" class="disclaimer" style="display:none;background:#e6f1fd;border-color:#9cc3f0">
+    🔑 <b>First time on this browser?</b> To ask questions, click <a href="#" id="bannerOpen">⚙ Settings</a>, choose your provider (Anthropic, OpenAI, Google Gemini or Groq) and paste your own API key. The key is saved only in this browser, so each new browser or computer needs it once. The plan table below works without a key.
+  </div>
 
   <section class="card">
     <h2>Ask River Watch</h2>
@@ -162,6 +166,11 @@
 
 <script>
 const $ = id => document.getElementById(id);
+// Server-side relay (Google Apps Script). Holds the team's key in its own Script properties, never in this page.
+// Paste the web-app URL between the quotes. The URL is not secret; the key is not in it.
+const RELAY_URL = 'https://script.google.com/macros/s/AKfycbwkWKtnc319jaSA-b-bExZN9q4BVBztx9uJjtwXKEIIs81js21nZkFD8qRHfyz4KPeUNg/exec';
+const hasRelay = () => /^https:\/\/script\.google\.com\/macros\/s\//.test(RELAY_URL);
+
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 // ================= Settings (browser only) =================
@@ -177,16 +186,24 @@ const openSettings = () => { document.body.classList.add('settings-open'); $('sa
 const closeSettings = () => document.body.classList.remove('settings-open');
 $('openSettings').onclick = openSettings; $('closeSettings').onclick = closeSettings; $('scrim').onclick = closeSettings;
 function updateStatus() {
-  const ok = !!$('key').value.trim();
+  const own = !!$('key').value.trim(), ok = own || hasRelay();
   $('status').className = 'status ' + (ok ? 'ok' : 'warn');
-  $('status').textContent = ok ? $('provider').selectedOptions[0].text + ' key set' : 'No API key: open settings';
+  $('status').textContent = own ? $('provider').selectedOptions[0].text + ' key set (yours)' : hasRelay() ? 'Ready: shared server-side key' : 'No API key: open settings';
+  $('keyBanner').style.display = ok ? 'none' : 'block';
 }
+$('bannerOpen').onclick = e => { e.preventDefault(); openSettings(); };
 load(); updateStatus();
 
 // ================= The brain (any of four providers) =================
 async function askModel(system, messages) {
   const provider = $('provider').value, key = $('key').value.trim();
   const model = $('model').value.trim() || DEFAULT_MODEL[provider];
+  if (!key && hasRelay()) {            // no personal key: use the team's server-side key
+    const r = await fetch(RELAY_URL, { method: 'POST', headers: { 'content-type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ system, messages }) });
+    const j = await r.json();
+    if (j.error) throw new Error('Shared key: ' + j.error);
+    return { text: j.text, tin: j.tin, tout: j.tout, model: j.model + ' (shared server-side key)' };
+  }
   if (!key) throw new Error('No API key set. Open settings.');
   let r, j;
   if (provider === 'anthropic') {
@@ -462,7 +479,7 @@ $('clear').onclick = () => { HISTORY_TURNS = []; $('chat').innerHTML = ''; };
 $('ask').onclick = async () => {
   const q = $('question').value.trim();
   if (!q) return $('question').focus();
-  if (!$('key').value.trim()) return openSettings();
+  if (!$('key').value.trim() && !hasRelay()) return openSettings();
   $('ask').disabled = true;
   const turn = document.createElement('div'); turn.className = 'turn';
   turn.innerHTML = `<div class="q">${esc(q)}</div><div class="a"><span class="loading">Reading the Sheet, forecast and warnings…</span></div><div class="tokens"></div>`;
