@@ -4,85 +4,155 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>River Watch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --surface: #f3f8ff; --surface-2: #e2eefc; --border: #c4d8f2;
-    --text: #0b2440; --muted: #48607e;
-    --accent: #0b63c5; --accent-2: #0e9aa7; --accent-soft: #c7e0fb;
-    --normal: #2f855a; --standby: #c27c0e; --barriers: #c53030;
-    --radius: 16px; --shadow: 0 6px 22px rgba(11, 60, 120, .13);
+  /* Palette: deep teal + slate. Light and dark themes via CSS variables. */
+  :root, [data-theme="light"] {
+    color-scheme: light;
+    --bg: #eef3f2; --bg-2: #e3ecea;
+    --surface: #ffffff; --surface-2: #f2f6f5; --border: #d3dfdc;
+    --text: #13232a; --muted: #5b6d73;
+    --accent: #0f766e; --accent-2: #0e7490; --accent-soft: rgba(15,118,110,.18); --on-accent: #ffffff;
+    --head-1: #0b3534; --head-2: #0f766e; --head-text: #ecfdf8; --head-sub: #b9e6dc;
+    --th: #163a40; --th-text: #ecf6f4; --zebra: #f5f9f8;
+    --answer: #eef7f5; --chip: #dcefeb; --chip-text: #0b4f49;
+    --warn-bg: #fff6e5; --warn-border: #f0d29a;
+    --info-bg: #e6f4f1; --info-border: #a6d6cd;
+    --input: #ffffff;
+    --normal: #15803d; --standby: #b45309; --barriers: #b91c1c;
+    --reh-bg: #fde68a; --reh-text: #713f12;
+    --ok-bg: #34d399; --ok-text: #053b2a; --bad-bg: #fca5a5; --bad-text: #4c0519;
+    --radius: 16px; --shadow: 0 6px 22px rgba(15, 50, 48, .10);
+  }
+  [data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0b1214; --bg-2: #0f1a1c;
+    --surface: #131d20; --surface-2: #1a262a; --border: #2a3b40;
+    --text: #e4eef0; --muted: #9bb0b5;
+    --accent: #2dd4bf; --accent-2: #22d3ee; --accent-soft: rgba(45,212,191,.22); --on-accent: #042321;
+    --head-1: #071c1d; --head-2: #0f4d48; --head-text: #e6fbf6; --head-sub: #9fd6ca;
+    --th: #0e2a2e; --th-text: #d9efeb; --zebra: #162226;
+    --answer: #172629; --chip: #1c3a37; --chip-text: #a7f3e6;
+    --warn-bg: #2a2214; --warn-border: #6d5527;
+    --info-bg: #112a2a; --info-border: #22605a;
+    --input: #0f181b;
+    --normal: #22a55a; --standby: #d97706; --barriers: #dc2626;
+    --reh-bg: #78550f; --reh-text: #fde68a;
+    --ok-bg: #10b981; --ok-text: #022c1f; --bad-bg: #f87171; --bad-text: #3b0710;
+    --shadow: 0 6px 22px rgba(0, 0, 0, .35);
   }
   * { box-sizing: border-box; }
-  html { background: #d6e8fb; }
-  body { margin: 0; font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
-         background: linear-gradient(165deg, #cfe3fb 0%, #e3f1fb 55%, #d9f2ef 100%) fixed; min-height: 100vh; }
-  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 20px 48px; }
-  header { position: sticky; top: 0; z-index: 10; color: #eef6ff;
-           background: linear-gradient(90deg, #0a3d7a, #0b63c5 60%, #0e9aa7); box-shadow: 0 4px 18px rgba(10,61,122,.3); }
-  .bar { max-width: 1140px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
-  .logo { width: 38px; height: 38px; border-radius: 12px; background: #e0f2fe; display: grid; place-items: center; font-size: 20px; }
-  .title { font-weight: 800; font-size: 18px; }
-  .sub { color: #cfe6ff; font-size: 12.5px; }
+  html { background: var(--bg); }
+  body { margin: 0; font: 15px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--text);
+         background: linear-gradient(170deg, var(--bg) 0%, var(--bg-2) 100%) fixed; min-height: 100vh; transition: background .2s, color .2s; }
+  a { color: var(--accent); }
+  .wrap { max-width: none; margin: 0; padding: 0 clamp(16px, 2.5vw, 40px) 48px; }
+  header { position: sticky; top: 0; z-index: 10; color: var(--head-text);
+           background: linear-gradient(90deg, var(--head-1), var(--head-2)); box-shadow: 0 4px 18px rgba(0,0,0,.18); }
+  .bar { max-width: none; margin: 0; padding: 14px clamp(16px, 2.5vw, 40px); display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
+  .bar-left { display: flex; align-items: center; gap: 12px; justify-self: start; }
+  .bar-right { display: flex; align-items: center; gap: 10px; justify-self: end; }
+  .brand { text-align: center; }
+  .tag { font-size: 12px; line-height: 1.3; color: var(--head-sub); font-weight: 500; }
+  .title { font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif; }
+  h1, h2, h3 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; letter-spacing: -0.01em; }
+  .logo { width: 38px; height: 38px; border-radius: 12px; background: rgba(255,255,255,.14); display: grid; place-items: center; font-size: 20px; }
+  .title { font-weight: 800; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.1; letter-spacing: 0.01em; }
+  .sub { color: var(--head-sub); font-size: 12.5px; margin-top: 4px; }
   .spacer { flex: 1; }
   .status { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; white-space: nowrap; background: rgba(255,255,255,.15); }
-  .status.ok { background: #34d399; color: #053b2a; }
-  .status.warn { background: #fca5a5; color: #4c0519; }
+  .status.ok { background: var(--ok-bg); color: var(--ok-text); }
+  .status.warn { background: var(--bad-bg); color: var(--bad-text); }
   .icon-btn { width: 38px; height: 38px; border-radius: 12px; border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.12);
               color: inherit; cursor: pointer; display: grid; place-items: center; font-size: 18px; }
   .drawer .icon-btn { color: var(--text); border-color: var(--border); background: var(--surface-2); }
-  .scrim { position: fixed; inset: 0; background: rgba(11,36,64,.45); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
-  .drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(390px, 92vw); background: #eaf3fe; border-left: 1px solid var(--border);
+  .scrim { position: fixed; inset: 0; background: rgba(5,20,20,.5); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 20; }
+  .drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(390px, 92vw); background: var(--surface); border-left: 1px solid var(--border);
             transform: translateX(100%); transition: transform .25s ease; z-index: 21; padding: 22px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
   body.settings-open .scrim { opacity: 1; pointer-events: auto; }
   body.settings-open .drawer { transform: none; }
   .drawer h2 { margin: 0; font-size: 19px; }
   .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
   .hint { font-size: 12.5px; color: var(--muted); }
-  input, select, textarea { width: 100%; font: inherit; color: var(--text); background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 12px; outline: none; }
+  input, select, textarea { width: 100%; font: inherit; color: var(--text); background: var(--input); border: 1.5px solid var(--border); border-radius: 12px; padding: 10px 12px; outline: none; }
   input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
-  .btn { font: inherit; font-weight: 700; border: 0; border-radius: 12px; padding: 11px 20px; cursor: pointer; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
-  .btn.ghost { background: #fff; color: var(--text); border: 1.5px solid var(--border); }
+  .btn { font: inherit; font-weight: 700; border: 0; border-radius: 12px; padding: 11px 20px; cursor: pointer; color: var(--on-accent); background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+  .btn.ghost { background: var(--surface); color: var(--text); border: 1.5px solid var(--border); }
   .btn:disabled { opacity: .6; cursor: wait; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-top: 20px; }
-  .card h2 { margin: 0 0 4px; font-size: 18px; }
+  .card h2 { margin: 0 0 6px; font-size: 21px; font-weight: 700; color: var(--accent); }
+  [data-theme="dark"] .card h2 { color: var(--text); }
+  .drawer h2 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; }
   .meta { color: var(--muted); font-size: 12.5px; margin-bottom: 12px; }
-  .disclaimer { margin-top: 18px; padding: 10px 14px; border-radius: 12px; background: #fff7e6; border: 1px solid #f3d39b; font-size: 13.5px; font-weight: 600; }
+  .disclaimer { margin-top: 18px; padding: 10px 14px; border-radius: 12px; background: var(--warn-bg); border: 1px solid var(--warn-border); font-size: 13.5px; font-weight: 600; }
+  .disclaimer.info { background: var(--info-bg); border-color: var(--info-border); font-weight: 500; }
   .ask-row { display: flex; gap: 10px; align-items: flex-end; }
   .ask-row textarea { resize: vertical; min-height: 54px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-  .chip { font: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 13px; border-radius: 999px; border: 0; cursor: pointer; background: #cfe3fb; color: #0a3d7a; }
+  .chip { font: inherit; font-size: 12.5px; font-weight: 600; padding: 6px 13px; border-radius: 999px; border: 0; cursor: pointer; background: var(--chip); color: var(--chip-text); }
   #chat .turn { margin-top: 12px; }
   #chat .q { font-weight: 700; }
-  #chat .a { white-space: pre-wrap; line-height: 1.6; padding: 12px 14px; border-radius: 12px; background: #e6f1fd; border-left: 4px solid var(--accent); margin-top: 6px; }
+  #chat .a { white-space: pre-wrap; line-height: 1.6; padding: 12px 14px; border-radius: 12px; background: var(--answer); border-left: 4px solid var(--accent); margin-top: 6px; }
   .tokens { margin-top: 6px; font-size: 12px; color: var(--muted); }
   .loading { color: var(--muted); }
   .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); }
   table { border-collapse: collapse; width: 100%; font-size: 13px; }
   th, td { padding: 9px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
-  th { background: #0a3d7a; color: #eef6ff; font-size: 12px; white-space: nowrap; }
-  tr:nth-child(even) td { background: #eef5fe; }
+  th { background: var(--th); color: var(--th-text); font-size: 12px; white-space: nowrap; }
+  tr:nth-child(even) td { background: var(--zebra); }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; }
   .pill.Normal { background: var(--normal); } .pill.Standby { background: var(--standby); } .pill.Barriers { background: var(--barriers); }
   .flag { color: var(--barriers); font-weight: 700; }
-  .why { color: var(--muted); font-size: 12px; max-width: 340px; }
-  .reh { background: #fde68a; color: #713f12; padding: 1px 6px; border-radius: 6px; font-size: 11.5px; font-weight: 700; }
+  .why { color: var(--muted); font-size: 12px; max-width: 520px; }
+  .reh { background: var(--reh-bg); color: var(--reh-text); padding: 1px 6px; border-radius: 6px; font-size: 11.5px; font-weight: 700; }
   ul.src { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
   footer { color: var(--muted); font-size: 12px; margin-top: 26px; text-align: center; }
-  @media (max-width: 640px) { .ask-row { flex-direction: column; align-items: stretch; } .sub { display: none; } }
+
+  /* Bento / collage layout: cards in reading order (01 Ask, 02 Plan, 03 History, 04 Sources) */
+  .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; margin-top: 20px; align-items: start; }
+  .bento .card { margin-top: 0; position: relative; overflow: hidden; }
+  .bento .card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); opacity: .85; }
+  .c-ask, .c-plan, .c-hist, .c-src { grid-column: 1 / -1; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .eyebrow .num { display: inline-grid; place-items: center; min-width: 26px; height: 22px; padding: 0 6px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); font-family: "Space Grotesk", "Inter", sans-serif; letter-spacing: 0; }
+  [data-theme="dark"] .eyebrow .num { color: var(--accent); }
+  #chat { max-height: 68vh; overflow-y: auto; padding-right: 4px; }
+  @media (min-width: 1280px) {
+    .c-ask  { grid-column: span 5; }
+    .c-plan { grid-column: span 7; }
+    .c-hist { grid-column: span 7; }
+    .c-src  { grid-column: span 5; }
+  }
+  @media (max-width: 860px) { .tag { display: none; } }
+  @media (max-width: 640px) { .ask-row { flex-direction: column; align-items: stretch; } .sub { display: none; }
+    .bar { grid-template-columns: auto 1fr auto; gap: 10px; } .brand { text-align: left; } .status { display: none; } }
 </style>
+<script>
+  // Theme: saved choice, else the device setting. Runs before the page draws to avoid a flash.
+  (function () { var t; try { t = localStorage.getItem('rw_theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t); })();
+</script>
 </head>
 <body>
 <header>
   <div class="bar">
-    <div class="logo" aria-hidden="true">🌊</div>
-    <div>
-      <div class="title">River Watch</div>
-      <div class="sub">Flood response decision support · eight towns · Flood Plan 2026/27 (fictional organisation, live data)</div>
+    <div class="bar-left">
+      <div class="logo" aria-hidden="true">🌊</div>
+      <div class="tag">Flood response<br>decision support</div>
     </div>
-    <div class="spacer"></div>
-    <span id="status" class="status">Checking settings…</span>
-    <button class="icon-btn" id="openSettings" title="Settings" aria-label="Open settings">⚙</button>
+    <div class="brand">
+      <div class="title">River Watch</div>
+      <div class="sub">Eight towns · Flood Plan 2026/27 · fictional organisation, live data</div>
+    </div>
+    <div class="bar-right">
+      <span id="status" class="status">Checking settings…</span>
+      <button class="icon-btn" id="themeToggle" title="Switch light / dark" aria-label="Switch light or dark mode">🌙</button>
+      <button class="icon-btn" id="openSettings" title="Settings" aria-label="Open settings">⚙</button>
+    </div>
   </div>
 </header>
 
@@ -120,11 +190,13 @@
 <main class="wrap">
   <div class="disclaimer">⚠ AI can make mistakes. River Watch only recommends; the Duty Officer makes the final decision and records it by 16:00. You are talking to an AI assistant, not a person.</div>
 
-  <div id="keyBanner" class="disclaimer" style="display:none;background:#e6f1fd;border-color:#9cc3f0">
+  <div id="keyBanner" class="disclaimer info" style="display:none">
     🔑 <b>First time on this browser?</b> To ask questions, click <a href="#" id="bannerOpen">⚙ Settings</a>, choose your provider (Anthropic, OpenAI, Google Gemini or Groq) and paste your own API key. The key is saved only in this browser, so each new browser or computer needs it once. The plan table below works without a key.
   </div>
 
-  <section class="card">
+  <div class="bento">
+  <section class="card c-ask">
+    <div class="eyebrow"><span class="num">01</span>Ask</div>
     <h2>Ask River Watch</h2>
     <div class="meta">Every question re-reads the team Sheet, the river flow forecast and the Met Éireann warnings live. Code applies the Flood Plan; the AI explains.</div>
     <div class="ask-row">
@@ -136,7 +208,8 @@
     <div style="margin-top:10px"><button class="btn ghost" id="clear" style="padding:6px 12px;font-size:12.5px">Clear conversation</button></div>
   </section>
 
-  <section class="card">
+  <section class="card c-plan">
+    <div class="eyebrow"><span class="num">02</span>Plan</div>
     <h2>Tonight's plan, computed in code</h2>
     <div class="meta" id="planMeta">Loading live data…</div>
     <div id="plan"><span class="loading">Loading…</span></div>
@@ -144,13 +217,15 @@
     <div id="warn" style="margin-top:12px"></div>
   </section>
 
-  <section class="card">
+  <section class="card c-hist">
+    <div class="eyebrow"><span class="num">03</span>History</div>
     <h2>Ten-year history (stored summary)</h2>
     <div class="meta">Computed once from daily flows 1 Jan 2016 – 31 Dec 2025 and stored in summary.json; not re-downloaded per question.</div>
     <div id="history"><span class="loading">Loading…</span></div>
   </section>
 
-  <section class="card">
+  <section class="card c-src">
+    <div class="eyebrow"><span class="num">04</span>Sources</div>
     <h2>Where every number comes from</h2>
     <ul class="src">
       <li><b>Team Sheet</b> (town, resources, overrides, notes): Google Sheet, read live as CSV on every question.</li>
@@ -161,11 +236,17 @@
     </ul>
   </section>
 
+  </div>
+
   <footer>River Watch · BDAIB CA2 · Fictional organisation and Sheet values; live public data. Flow data: Open-Meteo.com / GloFAS (Copernicus EMS). Warnings: Met Éireann.</footer>
 </main>
 
 <script>
 const $ = id => document.getElementById(id);
+// Light / dark toggle (choice saved in this browser)
+function setThemeIcon() { const dark = document.documentElement.getAttribute('data-theme') === 'dark'; $('themeToggle').textContent = dark ? '☀' : '🌙'; $('themeToggle').title = dark ? 'Switch to light mode' : 'Switch to dark mode'; }
+$('themeToggle').onclick = () => { const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', next); try { localStorage.setItem('rw_theme', next); } catch (e) {} setThemeIcon(); };
+setThemeIcon();
 // Server-side relay (Google Apps Script). Holds the team's key in its own Script properties, never in this page.
 // Paste the web-app URL between the quotes. The URL is not secret; the key is not in it.
 const RELAY_URL = 'https://script.google.com/macros/s/AKfycbwkWKtnc319jaSA-b-bExZN9q4BVBztx9uJjtwXKEIIs81js21nZkFD8qRHfyz4KPeUNg/exec';
